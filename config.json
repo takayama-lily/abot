@@ -1,0 +1,9 @@
+{
+    "eins": 123456789,
+    "masters": [
+        123456789
+    ],
+    "prefix": ">",
+    "platform": 5,
+    "log_level": "info"
+}

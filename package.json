@@ -1,0 +1,17 @@
+{
+  "name": "abot",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/takayama-lily/abot.git",
+  "author": "takayama",
+  "license": "MIT",
+  "dependencies": {
+    "oicq": "^1.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^15.0.1"
+  },
+  "scripts": {
+    "test": "tsc --build ./tsconfig.json && node ./dist/index"
+  }
+}
