@@ -81,16 +81,21 @@ class Plugin {
             for (let bot of this.binds) {
                 await this.deactivate(bot);
             }
-            if (typeof mod?.exports.destructor === "function") {
-                const res = mod?.exports.destructor();
+            if (typeof mod.exports.destructor === "function") {
+                const res = mod.exports.destructor();
                 if (res instanceof Promise)
                     await res;
             }
         }
         catch { }
-        const ix = mod?.parent?.children?.indexOf(mod);
+        const ix = mod.parent?.children?.indexOf(mod);
         if (ix >= 0)
-            mod?.parent?.children.splice(ix, 1);
+            mod.parent?.children.splice(ix, 1);
+        for (const fullpath in require.cache) {
+            if (require.cache[fullpath]?.id.startsWith(mod.path)) {
+                delete require.cache[fullpath];
+            }
+        }
         delete require.cache[this.fullpath];
     }
     async reboot() {
