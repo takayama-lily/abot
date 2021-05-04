@@ -110,7 +110,7 @@ export async function createZwei(uin: number, delegate: oicq.PrivateMessageEvent
                     zwei.terminate()
                 } else {
                     zwei.login()
-                    delegate.reply(">登录流程完成，可使用 \">show bot\" 命令查看是否登录成功")
+                    delegate.reply(">登录流程完成，可使用 \">bot\" 命令查看是否登录成功")
                 }
             }
         })

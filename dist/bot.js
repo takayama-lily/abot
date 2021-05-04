@@ -113,7 +113,7 @@ async function createZwei(uin, delegate, eins) {
                 }
                 else {
                     zwei.login();
-                    delegate.reply(">登录流程完成，可使用 \">show bot\" 命令查看是否登录成功");
+                    delegate.reply(">登录流程完成，可使用 \">bot\" 命令查看是否登录成功");
                 }
             }
         });
