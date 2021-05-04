@@ -6,3 +6,4 @@ data
 plugins/*
 !plugins/example
 !plugins/点歌
+!plugins/README.md
