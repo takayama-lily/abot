@@ -129,7 +129,7 @@ async function importPlugin(name) {
     if (!resolved) {
         const modules = await fs_1.default.promises.readdir(path_1.default.join(__dirname, "../node_modules"), { withFileTypes: true });
         for (let file of modules) {
-            if (file.isDirectory() && (file.name === name || file.name === "oicq_plugin_" + name)) {
+            if (file.isDirectory() && (file.name === name || file.name === "oicq-plugin-" + name)) {
                 resolved = file.name;
             }
         }
@@ -215,7 +215,7 @@ async function findAllPlugins() {
     }
     const modules = await fs_1.default.promises.readdir(path_1.default.join(__dirname, "../node_modules"), { withFileTypes: true });
     for (let file of modules) {
-        if (file.isDirectory() && file.name.startsWith("oicq_plugin_")) {
+        if (file.isDirectory() && file.name.startsWith("oicq-plugin-")) {
             try {
                 require.resolve(file.name);
                 node_modules.push(file.name);

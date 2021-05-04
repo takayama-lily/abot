@@ -1,12 +1,13 @@
 {
   "name": "abot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/index.js",
   "repository": "https://github.com/takayama-lily/abot.git",
   "author": "takayama",
   "license": "MIT",
   "dependencies": {
-    "oicq": "^1.16.1"
+    "oicq": "^1.16.1",
+    "oicq-plugin-onebot": "^0.1.2"
   },
   "devDependencies": {
     "@types/node": "^15.0.1"

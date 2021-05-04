@@ -88,6 +88,8 @@ const cmdHanders = {
                 const { plugins, plugin_modules, node_modules } = await plugin_1.findAllPlugins();
                 let msg = "可用插件模块一览：";
                 for (let name of [...plugin_modules, ...node_modules]) {
+                    if (name.startsWith("oicq-plugin-"))
+                        name = name.slice(12);
                     const plugin = plugins.get(name);
                     msg += `\n${name} / ${plugin ? "已" : "未"}导入 / bot: `;
                     if (plugin) {
