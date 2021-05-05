@@ -6,7 +6,13 @@
   "author": "takayama",
   "license": "MIT",
   "dependencies": {
-    "oicq": "^1.16.1"
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.6",
+    "mjsoul": "^2.2.0",
+    "moment": "^2.29.1",
+    "oicq": "^1.16.1",
+    "oicq-plugin-onebot": "^2.0.3",
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "@types/node": "^15.0.1"
