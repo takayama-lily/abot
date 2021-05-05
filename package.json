@@ -12,6 +12,8 @@
     "moment": "^2.29.1",
     "oicq": "^1.16.1",
     "oicq-plugin-onebot": "^2.0.3",
+    "riichi": "^1.2.0",
+    "string.ify": "^1.0.64",
     "ws": "^7.4.5"
   },
   "devDependencies": {
