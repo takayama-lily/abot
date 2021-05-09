@@ -121,7 +121,7 @@ async function importPlugin(name: string) {
         { withFileTypes: true }
     )
     for (let file of files) {
-        if (file.isDirectory() && file.name === name) {
+        if ((file.isDirectory() || file.isSymbolicLink()) && file.name === name) {
             resolved = path.join(__dirname, "../plugins", name)
         }
     }
@@ -210,7 +210,7 @@ export async function findAllPlugins() {
         { withFileTypes: true }
     )
     for (let file of files) {
-        if (file.isDirectory()) {
+        if (file.isDirectory() || file.isSymbolicLink()) {
             try {
                 require.resolve("../plugins/" + file.name)
                 plugin_modules.push(file.name)

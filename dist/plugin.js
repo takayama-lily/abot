@@ -122,7 +122,7 @@ async function importPlugin(name) {
     let resolved = "";
     const files = await fs_1.default.promises.readdir(path_1.default.join(__dirname, "../plugins"), { withFileTypes: true });
     for (let file of files) {
-        if (file.isDirectory() && file.name === name) {
+        if ((file.isDirectory() || file.isSymbolicLink()) && file.name === name) {
             resolved = path_1.default.join(__dirname, "../plugins", name);
         }
     }
@@ -205,7 +205,7 @@ async function findAllPlugins() {
     const plugin_modules = [], node_modules = [];
     const files = await fs_1.default.promises.readdir(path_1.default.join(__dirname, "../plugins"), { withFileTypes: true });
     for (let file of files) {
-        if (file.isDirectory()) {
+        if (file.isDirectory() || file.isSymbolicLink()) {
             try {
                 require.resolve("../plugins/" + file.name);
                 plugin_modules.push(file.name);
