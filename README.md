@@ -1,4 +1,7 @@
-### **自用小型插件式QQ机器人框架** [![node engine](https://img.shields.io/badge/node-%3E%20v14-green)](https://nodejs.org)
+### **自用小型插件式QQ机器人框架**
+
+[![node engine](https://img.shields.io/badge/node-%3E%20v14-green)](https://nodejs.org)
+[![discord](https://img.shields.io/static/v1?label=chat&message=discord&color=7289da&logo=discord)](https://discord.gg/gKnU7BARzv)
 
 > 多号并行，无依赖，使用 JavaScript/TypeScript 编写插件。
 
