@@ -10,7 +10,7 @@
     "cheerio": "^1.0.0-rc.6",
     "mjsoul": "^2.3.0",
     "moment": "^2.29.1",
-    "oicq": "^1.19.4",
+    "oicq": "^1.19.5",
     "oicq-plugin-onebot": "^2.0.3",
     "riichi": "^1.2.0",
     "string.ify": "^1.0.64",
