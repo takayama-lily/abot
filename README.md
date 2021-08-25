@@ -48,3 +48,6 @@
   * 如果你想要一个更健壮的环境，可以看一下 [Steve-xmh/neonbot](https://github.com/Steve-xmh/neonbot)  
 * 程序启动/重启时，只会登录第一个账号(eins)，其它账号需要通过给eins发消息来登录（不会自动登录）
   * 不自动登录的原因是防止多号情况下瞬间登录过多账号导致出现被封号的风险
+* 插件之间不支持直接依赖对方，但是可以并推荐通过事件来传递数据，以达到通信效果
+  * 比如插件A触发事件 `bot.emit("plugin.A.eventname", someparams)`
+  * 插件B监听此事件 `bot.on("plugin.A.eventname", listenerfn)`
