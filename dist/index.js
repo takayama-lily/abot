@@ -7,15 +7,19 @@ const config_1 = require("./config");
 const help_1 = __importDefault(require("./help"));
 const bot_1 = require("./bot");
 const plugin_1 = require("./plugin");
+process.on("unhandledRejection", (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 /**
  * 你创建的所有机器人实例
  */
 const bots = new Map();
 async function onMessage(data) {
-    const { masters, prefix } = config_1.getConfig();
-    if (!masters.includes(data.user_id) || !data.raw_message.startsWith(prefix))
+    const { masters, prefix } = (0, config_1.getConfig)();
+    if (!masters.includes(data.from_id) || !data.raw_message.startsWith(prefix))
         return;
-    const { cmd, params } = config_1.parseCommandline(data.raw_message.replace(prefix, ""));
+    const { cmd, params } = (0, config_1.parseCommandline)(data.raw_message.replace(prefix, ""));
+    data.self_id = this.uin;
     this.logger.info("收到指令，正在处理：" + data.raw_message);
     const msg = await cmdHanders[cmd]?.call(this, params, data) || "Error：未知指令：" + cmd;
     data.reply(msg);
@@ -31,7 +35,7 @@ function onOffline(data) {
  * 全部bot给全部管理者发消息
  */
 function broadcastAll(message) {
-    const { masters } = config_1.getConfig();
+    const { masters } = (0, config_1.getConfig)();
     for (let master of masters) {
         for (let [_, bot] of bots) {
             if (bot.isOnline()) {
@@ -44,7 +48,7 @@ function broadcastAll(message) {
  * 单个bot给全部管理者发消息
  */
 function broadcastOne(bot, message) {
-    const { masters } = config_1.getConfig();
+    const { masters } = (0, config_1.getConfig)();
     for (let master of masters) {
         bot.sendPrivateMsg(master, ">广播：" + message);
     }
@@ -57,7 +61,7 @@ async function bindMasterEvents(bot) {
     bot.on("system.online", onOnline);
     bot.on("system.offline", onOffline);
     bot.on("message.private", onMessage);
-    const plugins = await plugin_1.restorePlugins(bot);
+    const plugins = await (0, plugin_1.restorePlugins)(bot);
     let n = 0;
     for (let [_, plugin] of plugins) {
         if (plugin.binds.has(bot))
@@ -65,7 +69,7 @@ async function bindMasterEvents(bot) {
     }
     setTimeout(() => {
         broadcastOne(bot, `启动成功。启用了${n}个插件。
-※发送 ${config_1.getConfig().prefix}help 可以查询指令用法。`);
+※发送 ${(0, config_1.getConfig)().prefix}help 可以查询指令用法。`);
     }, 3000);
 }
 const cmdHanders = {
@@ -76,7 +80,7 @@ const cmdHanders = {
         if (params[0] === "help") {
             return help_1.default.conf;
         }
-        return await config_1.setConfig(params);
+        return await (0, config_1.setConfig)(params);
     },
     async shutdown() {
         process.exit(0);
@@ -85,7 +89,7 @@ const cmdHanders = {
         const cmd = params[0];
         if (!cmd) {
             try {
-                const { plugins, plugin_modules, node_modules } = await plugin_1.findAllPlugins();
+                const { plugins, plugin_modules, node_modules } = await (0, plugin_1.findAllPlugins)();
                 let msg = "可用插件模块一览：";
                 for (let name of [...plugin_modules, ...node_modules]) {
                     if (name.startsWith("oicq-plugin-"))
@@ -118,34 +122,34 @@ const cmdHanders = {
                     if (!bot) {
                         throw new Error("账号输入错误，无法找到该实例");
                     }
-                    await plugin_1.activate(name, bot);
+                    await (0, plugin_1.activate)(name, bot);
                     msg = `机器人${uin}启用插件成功`;
                     break;
                 case "off":
                     if (!bot) {
                         throw new Error("账号输入错误，无法找到该实例");
                     }
-                    await plugin_1.deactivate(name, bot);
+                    await (0, plugin_1.deactivate)(name, bot);
                     msg = `机器人${uin}禁用插件成功`;
                     break;
                 case "on-all":
                     for (let [_, bot] of bots) {
-                        await plugin_1.activate(name, bot);
+                        await (0, plugin_1.activate)(name, bot);
                     }
                     msg = "全部机器人启用插件成功";
                     break;
                 case "off-all":
                     for (let [_, bot] of bots) {
-                        await plugin_1.deactivate(name, bot);
+                        await (0, plugin_1.deactivate)(name, bot);
                     }
                     msg = "全部机器人禁用插件成功";
                     break;
                 case "del":
-                    await plugin_1.deletePlugin(name);
+                    await (0, plugin_1.deletePlugin)(name);
                     msg = "卸载插件成功";
                     break;
                 case "reboot":
-                    await plugin_1.rebootPlugin(name);
+                    await (0, plugin_1.rebootPlugin)(name);
                     msg = "重启插件成功";
                     break;
                 default:
@@ -176,7 +180,7 @@ const cmdHanders = {
             bot.logger.level = value;
         }
         try {
-            await bot_1.writeConfBot(bot);
+            await (0, bot_1.writeConfBot)(bot);
             return "Success: 设置成功";
         }
         catch (e) {
@@ -191,7 +195,7 @@ const cmdHanders = {
                 msg += `> ${bot.nickname} (${uin})
     在线：${bot.isOnline()}
     群：${bot.gl.size}个，好友：${bot.fl.size}个
-    消息量：${bot.getStatus().data?.msg_cnt_per_min}/分
+    消息量：${bot.stat.msg_cnt_per_min}/分
 `;
             }
             return msg;
@@ -203,7 +207,7 @@ const cmdHanders = {
             if (bots.has(uin)) {
                 return "Error：已经登录过这个号了";
             }
-            const bot = await bot_1.createZwei(uin, data, this);
+            const bot = await (0, bot_1.createZwei)(uin, data, this);
             bot?.once("system.online", function () {
                 bindMasterEvents(bot);
                 data.reply(">登录成功");
@@ -225,7 +229,7 @@ const cmdHanders = {
             if (bot.isOnline()) {
                 return "Error：此机器人正在登录中，请先离线再删除";
             }
-            await plugin_1.deactivateAll(bot);
+            await (0, plugin_1.deactivateAll)(bot);
             bots.delete(uin);
             return "Sucess：已删除此机器人实例";
         }
@@ -236,7 +240,7 @@ const cmdHanders = {
 };
 (async function startup() {
     process.title = "abot";
-    const bot = await bot_1.createEins();
+    const bot = await (0, bot_1.createEins)();
     bot.once("system.online", function () {
         bot.logger.mark("可发送 >help 给机器人查看指令帮助");
         bindMasterEvents(bot);

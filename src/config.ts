@@ -1,13 +1,13 @@
 import fs from "fs"
 import path from "path"
-import { ConfBot } from "oicq"
+import { Config } from "oicq"
 
 interface GlobalConfig {
     "prefix": string, // 管理指令前缀，默认为">"
     "masters": number[], // 管理权限账号
     "eins": number, // eins 的账号
-    "platform": ConfBot["platform"], // 1-5
-    "log_level": ConfBot["log_level"], // off,error,warn,info,debug,trace
+    "platform": Config["platform"], // 1-5
+    "log_level": Config["log_level"], // off,error,warn,info,debug,trace
 }
 
 /**
@@ -62,7 +62,7 @@ async function setDefaultPlatform(platform: number) {
     return "Success：当前初始platform：" + config.platform
 }
 
-async function setDefaultLogLevel(log_level: ConfBot["log_level"]) {
+async function setDefaultLogLevel(log_level: Config["log_level"]) {
     config.log_level = log_level
     await writeConfig()
     return "Success：当前初始log_level：" + config.log_level
@@ -82,7 +82,7 @@ export async function setConfig(params: ReturnType<typeof parseCommandline>["par
         } else if (params[0] === "platform") {
             ret = await setDefaultPlatform(Number(params[1]))
         } else if (params[0] === "log_level") {
-            ret = await setDefaultLogLevel(params[1] as ConfBot["log_level"])
+            ret = await setDefaultLogLevel(params[1] as Config["log_level"])
         } else {
             ret = "Error：未知参数：" + params[0]
         }

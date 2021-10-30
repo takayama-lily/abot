@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import crypto from "crypto"
-import oicq from "oicq"
+import * as oicq from "oicq"
 import { getConfig } from "./config"
 
 export function writeConfBot(bot: oicq.Client) {
@@ -17,14 +17,14 @@ async function genConfBot(uin: number) {
         const raw = await fs.promises.readFile(file, { encoding: "utf-8" })
         return Object.assign(JSON.parse(raw), {
             data_dir: path.join(__dirname, "../data")
-        }) as oicq.ConfBot
+        }) as oicq.Config
     } catch {
         const config = getConfig();
         return {
             log_level: config["log_level"],
             platform: config["platform"],
             data_dir: path.join(__dirname, "../data")
-        } as oicq.ConfBot
+        } as oicq.Config
     }
 }
 
@@ -78,7 +78,7 @@ export async function createEins() {
     return eins
 }
 
-export async function createZwei(uin: number, delegate: oicq.PrivateMessageEventData, eins: oicq.Client) {
+export async function createZwei(uin: number, delegate: oicq.PrivateMessageEvent, eins: oicq.Client) {
     try {
         var zwei = oicq.createClient(uin, await genConfBot(uin))
     } catch (e) {
