@@ -7,14 +7,15 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
+    "canvas": "^2.8.0",
     "cheerio": "^1.0.0-rc.6",
     "mjsoul": "^2.3.0",
     "moment": "^2.29.1",
-    "oicq": "^1.19.5",
+    "oicq": "^2.0.1-beta",
     "oicq-plugin-onebot": "^2.0.3",
     "riichi": "^1.2.0",
     "string.ify": "^1.0.64",
-    "ws": "^7.4.5"
+    "utf-8-validate": "^5.0.7"
   },
   "devDependencies": {
     "@types/node": "^15.0.1"

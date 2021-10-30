@@ -47,7 +47,7 @@ class Plugin {
                 await res
             await this._editBotPluginCache(bot, "add")
             this.binds.add(bot)
-        } catch (e) {
+        } catch (e: any) {
             throw new PluginError("启用插件时遇到错误。\n错误信息：" + e.message)
         }
     }
@@ -66,7 +66,7 @@ class Plugin {
                 await res
             await this._editBotPluginCache(bot, "delete")
             this.binds.delete(bot)
-        } catch (e) {
+        } catch (e: any) {
             throw new PluginError("禁用插件时遇到错误。\n错误信息：" + e.message)
         }
     }
@@ -102,7 +102,7 @@ class Plugin {
             for (let bot of binded) {
                 await this.activate(bot)
             }
-        } catch (e) {
+        } catch (e: any) {
             throw new PluginError("重启插件时遇到错误。\n错误信息：" + e.message)
         }
     }
@@ -142,7 +142,7 @@ async function importPlugin(name: string) {
         const plugin = new Plugin(name, resolved)
         plugins.set(name, plugin)
         return plugin
-    } catch (e) {
+    } catch (e: any) {
         throw new PluginError("导入插件失败，不合法的package\n错误信息：" + e.message)
     }
 }

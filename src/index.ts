@@ -3,17 +3,27 @@ import { getConfig, setConfig, parseCommandline } from "./config"
 import help from "./help"
 import { createEins, createZwei, writeConfBot } from "./bot"
 import { rebootPlugin, deletePlugin, findAllPlugins, activate, deactivate, deactivateAll, restorePlugins } from "./plugin"
+import { Logger } from "log4js"
+
+process.on("unhandledRejection", (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason)
+})
+
+interface DM extends oicq.PrivateMessageEvent {
+    self_id: number
+}
 
 /**
  * 你创建的所有机器人实例
  */
 const bots = new Map<number, oicq.Client>()
 
-async function onMessage(this: oicq.Client, data: oicq.PrivateMessageEventData) {
+async function onMessage(this: oicq.Client, data: DM) {
     const { masters, prefix } = getConfig()
-    if (!masters.includes(data.user_id) || !data.raw_message.startsWith(prefix))
+    if (!masters.includes(data.from_id) || !data.raw_message.startsWith(prefix))
         return
     const { cmd, params } = parseCommandline(data.raw_message.replace(prefix, ""))
+    data.self_id = this.uin
     this.logger.info("收到指令，正在处理：" + data.raw_message)
     const msg = await cmdHanders[cmd]?.call(this, params, data) || "Error：未知指令：" + cmd
     data.reply(msg)
@@ -22,7 +32,7 @@ async function onMessage(this: oicq.Client, data: oicq.PrivateMessageEventData) 
 function onOnline(this: oicq.Client) {
     broadcastOne(this, "此账号刚刚从掉线中恢复，现在一切正常。")
 }
-function onOffline(this: oicq.Client, data: oicq.OfflineEventData) {
+function onOffline(this: oicq.Client, data: any) {
     broadcastAll(this.uin + "已离线，\n原因为：" + data.message)
 }
 
@@ -57,7 +67,7 @@ async function bindMasterEvents(bot: oicq.Client) {
     bot.removeAllListeners("system.login.error")
     bot.on("system.online", onOnline)
     bot.on("system.offline", onOffline)
-    bot.on("message.private", onMessage)
+    bot.on("message.private", onMessage as any)
     const plugins = await restorePlugins(bot)
     let n = 0
     for (let [_, plugin] of plugins) {
@@ -74,7 +84,7 @@ const cmdHanders: {
     [k: string]: (
         this: oicq.Client,
         params: ReturnType<typeof parseCommandline>["params"],
-        data: oicq.PrivateMessageEventData
+        data: DM
     ) => Promise<string>
 } = {
 
@@ -112,7 +122,7 @@ const cmdHanders: {
                 }
                 msg += `\n※ 共找到${plugin_modules.length + node_modules.length}个插件`
                 return msg
-            } catch (e) {
+            } catch (e: any) {
                 return "Error: " + e.message
             }
         }
@@ -165,14 +175,14 @@ const cmdHanders: {
                     throw new Error("未知参数：" + cmd)
             }
             return "Success: " + msg
-        } catch (e) {
+        } catch (e: any) {
             return "Error: " + e.message
         }
     },
 
     async set(params, data) {
         let bot = bots.get(data.self_id) as oicq.Client,
-            key = params[0] as keyof oicq.ConfBot,
+            key = params[0] as keyof oicq.Config,
             value = params[1] as any
         if (!key)
             return "当前机器人的运行时参数：\n" + JSON.stringify(bot.config, null, 4) + "\n※ 修改输入：>set {key} {value}\n※ 修改 platform 需要重新登录"
@@ -186,14 +196,14 @@ const cmdHanders: {
             value = Boolean(value)
         if (typeof bot.config[key] === "number")
             value = isNaN(Number(value)) ? bot.config[key] : Number(value)
-        bot.config[key] = value
+        bot.config[key] = value as never
         if (key === "log_level") {
-            bot.logger.level = value
+            (bot.logger as Logger).level = value
         }
         try {
             await writeConfBot(bot)
             return "Success: 设置成功"
-        } catch (e) {
+        } catch (e: any) {
             return "Error: " + e.message
         }
     },
@@ -206,7 +216,7 @@ const cmdHanders: {
                 msg += `> ${bot.nickname} (${uin})
     在线：${bot.isOnline()}
     群：${bot.gl.size}个，好友：${bot.fl.size}个
-    消息量：${bot.getStatus().data?.msg_cnt_per_min}/分
+    消息量：${bot.stat.msg_cnt_per_min}/分
 `
             }
             return msg

@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,7 +26,7 @@ exports.createZwei = exports.createEins = exports.writeConfBot = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const crypto_1 = __importDefault(require("crypto"));
-const oicq_1 = __importDefault(require("oicq"));
+const oicq = __importStar(require("oicq"));
 const config_1 = require("./config");
 function writeConfBot(bot) {
     return fs_1.default.promises.writeFile(path_1.default.join(bot.dir, "confbot"), JSON.stringify(bot.config, null, 4));
@@ -22,7 +41,7 @@ async function genConfBot(uin) {
         });
     }
     catch {
-        const config = config_1.getConfig();
+        const config = (0, config_1.getConfig)();
         return {
             log_level: config["log_level"],
             platform: config["platform"],
@@ -36,8 +55,8 @@ async function genConfBot(uin) {
  * 可以通过它创建其它机器人实例
  */
 async function createEins() {
-    const config = config_1.getConfig();
-    const eins = oicq_1.default.createClient(config["eins"], await genConfBot(config["eins"]));
+    const config = (0, config_1.getConfig)();
+    const eins = oicq.createClient(config["eins"], await genConfBot(config["eins"]));
     eins.logger.mark("正在登录第一个账号，登录成功后stdin会被重定向到此账号。");
     eins.on("system.login.slider", function () {
         eins.logger.mark("取ticket教程：https://github.com/takayama-lily/oicq/wiki/01.滑动验证码和设备锁");
@@ -80,7 +99,7 @@ async function createEins() {
 exports.createEins = createEins;
 async function createZwei(uin, delegate, eins) {
     try {
-        var zwei = oicq_1.default.createClient(uin, await genConfBot(uin));
+        var zwei = oicq.createClient(uin, await genConfBot(uin));
     }
     catch (e) {
         delegate.reply("Error：账号输入错误");
