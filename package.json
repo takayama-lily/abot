@@ -6,7 +6,7 @@
   "author": "takayama",
   "license": "MIT",
   "dependencies": {
-    "oicq": "^1.16.1"
+    "oicq": "latest"
   },
   "devDependencies": {
     "@types/node": "^15.0.1"
