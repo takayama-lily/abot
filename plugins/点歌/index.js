@@ -1,10 +1,10 @@
 "use strict"
 const http = require("http")
-const { segment } = require("oicq")
+const oicq = require("oicq")
 
 /**
- * @this {import("oicq").Client}
- * @param {import("oicq").MessageEventData} data 
+ * @this {oicq.Client}
+ * @param {oicq.MessageEvent} data 
  */
 function listener(data) {
     if (data.raw_message.startsWith("点歌")) {
@@ -15,8 +15,10 @@ function listener(data) {
             res.on("data", chunk=>{
                 try {
                     const id = JSON.parse(String(chunk))?.result?.songs?.[0]?.id
-                    if (id)
-                        data.reply(segment.music("163", id))
+                    if (id) {
+                        data.group?.shareMusic("163", id)
+                        data.friend?.shareMusic("163", id)
+                    }
                     else
                         data.reply("未找到歌曲：" + word)
                 } catch (e) {
